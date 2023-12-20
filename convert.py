@@ -221,7 +221,18 @@ def deleteLog():
 parse_arguments()
 
 if(cleanup):
-    deleteLog()
+    video_files = get_video_files(folder_path)
+    for video_file in video_files:
+        directory, file_name, file_extension = separate_path_filename_extension(video_file)
+        output_file_path_converted = os.path.join(directory, file_name + '-converted' + ".mp4")
+        if os.path.exists(video_file) and os.path.exists(output_file_path_converted):
+            try:
+                os.remove(output_file_path_converted)
+                print(f"The file '{output_file_path_converted}' has been deleted successfully.")
+            except FileNotFoundError:
+                print(f"The file '{output_file_path_converted}' does not exist.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
 else:
     StartProcess(folder_path)    
 
