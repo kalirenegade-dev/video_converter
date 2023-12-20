@@ -9,6 +9,7 @@ append = False
 recursive = False
 folder_path = "."
 gpu = False
+logFile = 'convert.log'
 
 def parse_arguments():
     global force
@@ -16,12 +17,14 @@ def parse_arguments():
     global append
     global recursive
     global gpu
+    global logFile
     parser = argparse.ArgumentParser(description='Video conversion script with optional force flag.')
     parser.add_argument('-f', '--force', action='store_true', help='Force the conversion without asking for confirmation.')
     parser.add_argument('-a', '--append', action='store_true', help='Append to existing log file.')
     parser.add_argument('-p', '--path', type=str, help='Specify the folder path for video files.')
     parser.add_argument('-r', '--recursive', action='store_true', help='convert videos inside folders')
     parser.add_argument('-g', '--gpu', action='store_true', help='Uses Gpu by enabling the nvenc_h264 flag')
+    parser.add_argument('-l', '--logfile', type=str, help='Location of log file.')
 
     args = parser.parse_args()
     
@@ -31,6 +34,7 @@ def parse_arguments():
     append = args.append
     recursive = args.recursive
     gpu = args.gpu
+    logFile = args.logfile
     
     
 def get_video_files(folder_path):
@@ -197,13 +201,15 @@ def StartProcess(folder_path):
     Log(f"------Total Space Saved-----\n{format_size_difference(TotalSpaceSaving)}")
     
 def Log(text):
-    with open("convert.log", 'a') as log_file:
+    global logFile
+    with open(logFile, 'a') as log_file:
         log_file.write(f'{text}\n')
 
 def deleteLog():
-    if os.path.exists("convert.log"):
+    global logFile
+    if os.path.exists(logFile):
         try:
-            os.remove("convert.log")
+            os.remove(logFile)
         except Exception as e:
             print(f"An error occurred while deleting the log file: {e}")
 
