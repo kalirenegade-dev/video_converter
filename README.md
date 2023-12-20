@@ -17,3 +17,5 @@ arguments are
 -g    --gpu          will use Gpu by enabling the nvenc_h264 flag
 
 -l    --logfile      location of log file
+
+-l    --cleanup      removes any failed converted files

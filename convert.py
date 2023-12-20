@@ -10,6 +10,7 @@ recursive = False
 folder_path = "."
 gpu = False
 logFile = 'convert.log'
+cleanup = False
 
 def parse_arguments():
     global force
@@ -18,6 +19,7 @@ def parse_arguments():
     global recursive
     global gpu
     global logFile
+    global cleanup
     parser = argparse.ArgumentParser(description='Video conversion script with optional force flag.')
     parser.add_argument('-f', '--force', action='store_true', help='Force the conversion without asking for confirmation.')
     parser.add_argument('-a', '--append', action='store_true', help='Append to existing log file.')
@@ -25,7 +27,8 @@ def parse_arguments():
     parser.add_argument('-r', '--recursive', action='store_true', help='convert videos inside folders')
     parser.add_argument('-g', '--gpu', action='store_true', help='Uses Gpu by enabling the nvenc_h264 flag')
     parser.add_argument('-l', '--logfile', type=str, help='Location of log file.')
-
+    parser.add_argument('-c', '--cleanup', action='store_true', help='Removes any failed converted files')
+  
     args = parser.parse_args()
     
     # Update the force variable based on the command-line argument
@@ -35,7 +38,7 @@ def parse_arguments():
     recursive = args.recursive
     gpu = args.gpu
     logFile = args.logfile
-    
+    cleanup = args.cleanup
     
 def get_video_files(folder_path):
     global recursive
@@ -215,7 +218,11 @@ def deleteLog():
 
 
 
-
 parse_arguments()
-StartProcess(folder_path)
+
+if(cleanup):
+    deleteLog()
+else:
+    StartProcess(folder_path)    
+
 
