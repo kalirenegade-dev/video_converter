@@ -59,20 +59,26 @@ def get_file_size(file_path):
     try:
         # Get the size of the file in bytes
         size_bytes = os.path.getsize(file_path)
-        return size_bytes / 1024
+        return size_bytes 
     except FileNotFoundError:
         return None
 
 def format_size_difference(difference):
     tb = abs(difference) / (1024**4)
     gb = abs(difference) / (1024**3)
-    mb = abs(difference) / 1024
+    mb = abs(difference) / (1024**2)
+    kb = abs(difference) / 1024
+
     if tb >= 1:
         return f"({tb:.2f} TB)"
     elif gb >= 1:
         return f"({gb:.2f} GB)"
-    else:
+    elif mb >= 1:
         return f"({mb:.2f} MB)"
+    elif kb >= 1:
+        return f"({kb:.2f} KB)" 
+    else:
+        return f"({int(abs(difference))} B)"
 
 def separate_path_filename_extension(file_path):
     # Split the file path into directory, base name, and extension
@@ -113,13 +119,14 @@ def handbrake_command_gen(file_path):
         return handbrake_command
     
 
+
 def ConvertFile(input_file):
     global TotalSpaceSaving
     try:
         subprocess.run(handbrake_command_gen(input_file), check=True)
         directory, file_name, file_extension = separate_path_filename_extension(input_file)
         output_file_path_converted = os.path.join(directory, file_name + '-converted' + ".mp4")
-        output_file_path_Skipped = os.path.join(directory, file_name + '-skipped' + file_extension)
+        output_file_path_Checked= os.path.join(directory, file_name + '-checked' + file_extension)
         print("Conversion successful")
         IsSmaller,SizeDiffrence,inbytes = is_output_smaller(input_file)
         if IsSmaller:
@@ -145,7 +152,7 @@ def ConvertFile(input_file):
             except Exception as e:
                 print(f"An error occurred: {e}")
             try:
-                os.rename(input_file, output_file_path_Skipped)
+                os.rename(input_file, output_file_path_Checked)
                 print(f"The file '{input_file}' has been renamed to '{input_file}' successfully.")
             except FileNotFoundError:
                 print(f"The file '{input_file}' does not exist.")
